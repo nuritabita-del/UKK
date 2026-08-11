@@ -1,0 +1,24 @@
+@import 'tailwindcss';
+
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../storage/framework/views/*.php';
+@source '../**/*.blade.php';
+@source '../**/*.js';
+
+@theme {
+    --font-sans: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif;
+    --font-brand: 'Parisienne', 'Pinyon Script', cursive;
+    --color-luxury-bg: #322D29;
+    --color-luxury-dark: #24201D;
+    --color-luxury-card: #3D3732;
+    --color-luxury-hover: #49423C;
+    --color-luxury-border: #4E4640;
+    --color-luxury-accent: #72383D;
+    --color-luxury-accent-hover: #8C464C;
+    --color-luxury-accent-dark: #562A2E;
+    --color-luxury-gold: #E2C599;
+    --color-luxury-gold-light: #F2E3CD;
+    --color-luxury-cream: #F5EFEA;
+    --color-luxury-taupe: #BBAE9F;
+}
+
