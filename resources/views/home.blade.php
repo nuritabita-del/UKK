@@ -22,7 +22,7 @@
                 <svg class="w-3.5 h-3.5 text-[#E2C599]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"></path></svg>
                 Freshly Baked Every Morning
             </span>
-            <h1 class="text-3xl sm:text-5xl font-classic font-light tracking-wider leading-tight text-[#ffd1be]">
+            <h1 class="text-3xl sm:text-5xl font-classic font-light tracking-wider leading-tight text-[#e2c599]">
                 Homemade Cookies & Bakery Made with Love
             </h1>
             <p class="text-[#E8D5B7] text-sm sm:text-base leading-relaxed">
@@ -86,7 +86,7 @@
                         <svg class="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                         Special Event
                     </span>
-                    <h3 class="text-3xl sm:text-5xl font-classic font-light tracking-wider leading-tight text-[#ffd1be] drop-shadow-md">
+                    <h3 class="text-3xl sm:text-5xl font-classic font-light tracking-wider leading-tight text-[#e2c599] drop-shadow-md">
                         Ramadhan Tiba!
                     </h3>
                     <p class="text-xs sm:text-sm text-[#E8D5B7] line-clamp-2 leading-relaxed">

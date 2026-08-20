@@ -33,7 +33,7 @@
         <div class="lg:col-span-5 relative group">
             <div class="absolute -inset-2 bg-gradient-to-r from-[#E2C599] to-[#72383D] rounded-3xl blur-lg opacity-25 group-hover:opacity-40 transition duration-300"></div>
             <div class="relative rounded-2xl overflow-hidden shadow-xl border border-[#4E4640] aspect-4/3 sm:aspect-square">
-                <img src="{{ asset('images/about-bakery.png') }}" 
+                <img src="{{ asset('image/about-bakery.png') }}" 
                      onerror="this.src='https://images.unsplash.com/photo-1509440159596-0249088772ff?q=80&w=1000&auto=format&fit=crop'" 
                      alt="Dapur Karen's Bakery" 
                      class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
