@@ -72,21 +72,12 @@
             </div>
 
             <div>
-                <label class="block text-xs font-bold text-[#E8D5B7] mb-2 uppercase tracking-wider">Status Tampilan Produk <span class="text-rose-400">*</span></label>
-                <div class="grid grid-cols-2 gap-3 max-w-md">
-                    <label class="relative flex items-center justify-center p-3 rounded-xl border cursor-pointer transition-all select-none has-[:checked]:bg-emerald-950/80 has-[:checked]:border-emerald-500 has-[:checked]:text-emerald-300 bg-[#24201D] border-[#4E4640] text-[#BBAE9F] hover:border-[#72383D]">
-                        <input type="radio" name="is_active" value="1" @checked(old('is_active', '1') == '1') class="sr-only">
-                        <div class="flex items-center gap-2 text-xs font-bold">
-                            <span class="w-2.5 h-2.5 rounded-full bg-emerald-400"></span>
-                            <span>Aktif</span>
-                        </div>
-                    </label>
-                    <label class="relative flex items-center justify-center p-3 rounded-xl border cursor-pointer transition-all select-none has-[:checked]:bg-rose-950/80 has-[:checked]:border-rose-500 has-[:checked]:text-rose-300 bg-[#24201D] border-[#4E4640] text-[#BBAE9F] hover:border-[#72383D]">
-                        <input type="radio" name="is_active" value="0" @checked(old('is_active') === '0') class="sr-only">
-                        <div class="flex items-center gap-2 text-xs font-bold">
-                            <span class="w-2.5 h-2.5 rounded-full bg-rose-400"></span>
-                            <span>Nonaktif</span>
-                        </div>
+                <label class="block text-xs font-bold text-[#E8D5B7] mb-2 uppercase tracking-wider">Status Tampilan Produk</label>
+                <div class="flex items-center gap-3 bg-[#24201D] p-3 rounded-xl border border-[#4E4640] max-w-md">
+                    <input type="hidden" name="is_active" value="0">
+                    <input type="checkbox" id="is_active" name="is_active" value="1" @checked(old('is_active', true)) class="w-4 h-4 rounded border-[#4E4640] bg-[#322D29] text-[#72383D] focus:ring-[#72383D] focus:ring-offset-0 cursor-pointer accent-[#72383D]">
+                    <label for="is_active" class="text-xs font-bold text-white cursor-pointer select-none">
+                        Produk Aktif (Tampilkan di Katalog Pembeli)
                     </label>
                 </div>
             </div>
