@@ -7,20 +7,26 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 
+/**
+ * Mengelola pengunggahan bukti pembayaran dari pelanggan.
+ */
 class PaymentProofController extends Controller
 {
     /**
-     * Customer mengupload foto bukti transfer/QRIS.
-     * Status pembayaran akan berubah jadi "menunggu_verifikasi".
+     * Memproses pengunggahan foto bukti transfer/QRIS pelanggan.
+     * Mengubah status pembayaran menjadi "menunggu_verifikasi".
      */
     public function store(Request $request, Order $order)
     {
+        // Pengamanan akses: pastikan pesanan milik pengguna yang sedang login
         abort_if($order->user_id !== Auth::id(), 403);
 
+        // Cek status pesanan apakah masih dapat menerima bukti pembayaran
         if (! $order->isAwaitingProof()) {
             return back()->with('error', 'Bukti pembayaran untuk pesanan ini sudah dikirim.');
         }
 
+        // Validasi ekstensi dan ukuran file gambar
         $request->validate([
             'proof' => ['required', 'image', 'mimes:jpg,jpeg,png,webp', 'max:4096'],
         ], [
@@ -28,13 +34,15 @@ class PaymentProofController extends Controller
             'proof.mimes' => 'Foto harus berformat JPG, JPEG, PNG, atau WEBP.',
         ]);
 
-        // Hapus bukti lama jika sebelumnya sempat ditolak & upload ulang.
+        // Hapus file bukti lama jika pengunggahan ulang setelah ditolak
         if ($order->payment_proof) {
             Storage::disk('public')->delete($order->payment_proof);
         }
 
+        // Simpan file ke media penyimpanan publik
         $path = $request->file('proof')->store('payment-proofs', 'public');
 
+        // Perbarui record status pembayaran pesanan
         $order->update([
             'payment_proof' => $path,
             'payment_status' => Order::PAYMENT_WAITING_VERIFICATION,

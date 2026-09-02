@@ -2,6 +2,7 @@
 <html lang="id" class="dark">
 <head>
     <meta charset="UTF-8">
+    <!-- 1. RESPONSIVE META TAG: Menginstruksikan browser seluler agar menyesuaikan lebar website sesuai lebar layar HP penguji (skala 1:1) -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield("title", "Karen's Bakery") - Fresh From Oven</title>
     <!-- Google Fonts: Ballet, Cinzel, Bodoni Moda, Cormorant Garamond, Italiana, Parisienne, Pinyon Script -->
@@ -87,9 +88,10 @@
 
     <!-- Header Navigation (Fixed at top - Luxury Dark Charcoal Surface) -->
     <header class="fixed top-0 left-0 right-0 z-50 bg-[#24201D]/95 backdrop-blur-md text-[#F5EFEA] shadow-2xl border-b border-[#4E4640]">
+        <!-- 2. RESPONSIVE CONTAINER: max-w-6xl membatasi lebar maksimal di layar besar, px-4 sm:px-6 memberi jarak tepi di layar HP agar tidak mentok -->
         <div class="max-w-6xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between">
             
-            <!-- Brand Logo -->
+            <!-- Brand Logo (Ukuran teks dinamis: 2.5xl di HP, sm:text-4xl di layar sm/tablet) -->
             <a href="{{ route('home') }}" class="group">
                 <div>
                     <span class="text-2.5xl sm:text-4xl font-brand font-normal text-[#E2C599] tracking-wider block leading-none pt-1">Karen's Bakery</span>
@@ -97,7 +99,7 @@
                 </div>
             </a>
 
-            <!-- Desktop Navigation Links -->
+            <!-- 3. DESKTOP NAV: hidden (sembunyi di HP), md:flex (muncul horizontal mulai layar medium/laptop ≥768px) -->
             <nav class="hidden md:flex items-center gap-2 sm:gap-4 text-sm font-semibold">
                 <a href="{{ route('home') }}" 
                    class="px-3 py-1.5 rounded-lg transition-colors {{ request()->routeIs('home') ? 'bg-[#72383D] text-white font-bold border border-[#8C464C]' : 'text-[#E8D5B7] hover:text-white hover:bg-[#3D3732]' }}">
@@ -141,7 +143,7 @@
                 @endauth
             </nav>
 
-            <!-- Mobile Hamburger Button -->
+            <!-- 4. MOBILE HAMBURGER BUTTON: md:hidden (hanya tampil di layar HP <768px, otomatis tersembunyi di laptop/desktop) -->
             <button type="button" 
                     onclick="toggleMobileMenu()" 
                     aria-label="Menu Navigasi" 
@@ -155,7 +157,7 @@
             </button>
         </div>
 
-        <!-- Mobile Menu Overlay Dropdown -->
+        <!-- 5. MOBILE MENU DROPDOWN: hidden md:hidden (tersembunyi secara default, dibuka lewat JavaScript toggleMobileMenu() di HP) -->
         <div id="mobile-menu" class="hidden md:hidden border-t border-[#4E4640] bg-[#24201D]/98 backdrop-blur-lg px-4 pt-3 pb-6 space-y-2">
             <a href="{{ route('home') }}" 
                class="block px-4 py-2.5 rounded-xl text-sm font-semibold transition {{ request()->routeIs('home') ? 'bg-[#72383D] text-white font-bold border border-[#8C464C]' : 'text-[#E8D5B7] hover:bg-[#3D3732]' }}">

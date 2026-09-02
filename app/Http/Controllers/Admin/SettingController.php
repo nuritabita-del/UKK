@@ -7,8 +7,14 @@ use App\Models\Setting;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
+/**
+ * Mengelola pengaturan gambar QRIS dan nomor rekening pembayaran toko.
+ */
 class SettingController extends Controller
 {
+    /**
+     * Menampilkan formulir pengaturan QRIS dan informasi rekening bank.
+     */
     public function edit()
     {
         $qrisImage = Setting::get('qris_image');
@@ -18,6 +24,9 @@ class SettingController extends Controller
         return view('admin.settings.edit', compact('qrisImage', 'bcaNumber', 'bcaName'));
     }
 
+    /**
+     * Memperbarui foto QRIS dan detail rekening penerima pembayaran.
+     */
     public function update(Request $request)
     {
         $request->validate([
@@ -26,6 +35,7 @@ class SettingController extends Controller
             'bca_account_name' => ['nullable', 'string', 'max:100'],
         ]);
 
+        // Simpan gambar QRIS baru dan hapus gambar lama jika ada
         if ($request->hasFile('qris_image')) {
             $old = Setting::get('qris_image');
             if ($old) {
@@ -35,10 +45,12 @@ class SettingController extends Controller
             Setting::set('qris_image', $path);
         }
 
+        // Perbarui nomor rekening bank
         if ($request->has('bca_account_number')) {
             Setting::set('bca_account_number', $request->input('bca_account_number'));
         }
 
+        // Perbarui atas nama rekening bank
         if ($request->has('bca_account_name')) {
             Setting::set('bca_account_name', $request->input('bca_account_name'));
         }

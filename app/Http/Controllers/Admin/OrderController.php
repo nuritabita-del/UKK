@@ -6,16 +6,24 @@ use App\Http\Controllers\Controller;
 use App\Models\Order;
 use Illuminate\Http\Request;
 
+/**
+ * Mengelola daftar pesanan, perombakan status pesanan, serta verifikasi bukti pembayaran pelanggan.
+ */
 class OrderController extends Controller
 {
+    /**
+     * Menampilkan daftar pesanan masuk dengan opsi filter status dan nomor pesanan.
+     */
     public function index(Request $request)
     {
         $query = Order::with("user");
 
+        // Filter berdasarkan status pesanan
         if ($request->filled("status")) {
             $query->where("status", $request->status);
         }
 
+        // Filter berdasarkan nomor pesanan
         if ($request->filled("q")) {
             $query->where("order_number", "like", "%" . $request->q . "%");
         }
@@ -25,6 +33,9 @@ class OrderController extends Controller
         return view("admin.orders.index", compact("orders"));
     }
 
+    /**
+     * Menampilkan rincian pesanan, data pemesan, dan bukti pembayaran yang diunggah.
+     */
     public function show(Order $order)
     {
         $order->load(["items", "user"]);
@@ -32,6 +43,9 @@ class OrderController extends Controller
         return view("admin.orders.show", compact("order"));
     }
 
+    /**
+     * Memperbarui status pengerjaan / pengiriman pesanan.
+     */
     public function updateStatus(Request $request, Order $order)
     {
         $data = $request->validate([
@@ -44,10 +58,11 @@ class OrderController extends Controller
     }
 
     /**
-     * Admin menyetujui bukti pembayaran yang diupload customer.
+     * Menyetujui (ACC) bukti pembayaran dari pelanggan dan melanjutkan pesanan ke status diproses.
      */
     public function approvePayment(Order $order)
     {
+        // Pastikan pesanan sedang dalam status menunggu verifikasi
         if (! $order->isAwaitingVerification()) {
             return back()->with("error", "Pesanan ini tidak sedang menunggu verifikasi.");
         }
@@ -62,11 +77,11 @@ class OrderController extends Controller
     }
 
     /**
-     * Admin menolak bukti pembayaran (misal foto tidak jelas / nominal tidak sesuai).
-     * Customer akan diminta upload ulang.
+     * Menolak bukti pembayaran pelanggan (misal: foto tidak valid/jelas) sehingga pelanggan harus unggah ulang.
      */
     public function rejectPayment(Order $order)
     {
+        // Pastikan pesanan sedang dalam status menunggu verifikasi
         if (! $order->isAwaitingVerification()) {
             return back()->with("error", "Pesanan ini tidak sedang menunggu verifikasi.");
         }

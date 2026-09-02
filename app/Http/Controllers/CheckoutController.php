@@ -9,12 +9,19 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
+/**
+ * Mengelola alur checkout, pemprosesan pesanan, dan halaman pembayaran.
+ */
 class CheckoutController extends Controller
 {
+    /**
+     * Menampilkan halaman checkout pesanan.
+     */
     public function index()
     {
         $cart = Auth::user()->cart()->with('items.variant.product')->first();
 
+        // Pastikan keranjang belanja tidak kosong
         if (! $cart || $cart->items->isEmpty()) {
             return redirect()->route('cart.index')->with('error', 'Keranjang kamu masih kosong.');
         }
@@ -22,8 +29,12 @@ class CheckoutController extends Controller
         return view('checkout.index', compact('cart'));
     }
 
+    /**
+     * Memproses formulir checkout dan membuat pesanan baru dalam transaksi database.
+     */
     public function store(Request $request)
     {
+        // 1. Validasi input pengiriman
         $data = $request->validate([
             'delivery_method' => ['required', 'in:pickup,delivery'],
             'recipient_name' => ['required', 'string', 'max:255'],
@@ -34,20 +45,24 @@ class CheckoutController extends Controller
 
         $cart = Auth::user()->cart()->with('items.variant')->first();
 
+        // Pastikan keranjang tidak kosong
         if (! $cart || $cart->items->isEmpty()) {
             return redirect()->route('cart.index')->with('error', 'Keranjang kamu masih kosong.');
         }
 
+        // 2. Verifikasi ketersediaan stok setiap item
         foreach ($cart->items as $item) {
             if ($item->quantity > $item->variant->stock) {
                 return back()->with('error', "Stok {$item->variant->name} tidak mencukupi.");
             }
         }
 
+        // 3. Simpan transaksi pesanan dan kurangi stok
         $order = DB::transaction(function () use ($data, $cart) {
             $subtotal = $cart->items->sum(fn ($i) => $i->quantity * $i->variant->price);
             $shippingCost = $data['delivery_method'] === 'delivery' ? 15000 : 0;
 
+            // Buat record pesanan baru
             $order = Order::create([
                 'user_id' => Auth::id(),
                 'order_number' => Order::generateOrderNumber(),
@@ -64,6 +79,7 @@ class CheckoutController extends Controller
                 'payment_status' => Order::PAYMENT_PENDING,
             ]);
 
+            // Simpan detail item pesanan & potong stok produk
             foreach ($cart->items as $item) {
                 OrderItem::create([
                     'order_id' => $order->id,
@@ -78,6 +94,7 @@ class CheckoutController extends Controller
                 $item->variant->decrement('stock', $item->quantity);
             }
 
+            // Kosongkan keranjang belanja pengguna
             $cart->items()->delete();
 
             return $order;
@@ -87,11 +104,11 @@ class CheckoutController extends Controller
     }
 
     /**
-     * Halaman pembayaran QRIS: menampilkan QR, form upload bukti,
-     * atau status menunggu verifikasi / sudah diterima, tergantung payment_status.
+     * Menampilkan halaman instruksi pembayaran QRIS / Bank Transfer.
      */
     public function pay(Order $order)
     {
+        // Pengamanan akses: hanya pemilik pesanan yang dapat melihat halaman ini
         abort_if($order->user_id !== Auth::id(), 403);
 
         $qrisImage = Setting::get('qris_image');

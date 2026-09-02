@@ -8,6 +8,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
+/**
+ * Model data transaksi pesanan (Order).
+ */
 class Order extends Model
 {
     use HasFactory;
@@ -37,31 +40,43 @@ class Order extends Model
         return $this->hasOne(Payment::class);
     }
 
+    /**
+     * Membuat nomor pesanan unik dengan format CKS-YYYYMMDD-HEX.
+     */
     public static function generateOrderNumber(): string
     {
         return "CKS-" . now()->format("Ymd") . "-" . strtoupper(uniqid());
     }
 
-    // Status pembayaran yang dipakai di alur QRIS manual:
-    // pending              -> belum upload bukti pembayaran
-    // menunggu_verifikasi  -> bukti sudah diupload, menunggu di-ACC admin
-    // paid                 -> sudah di-ACC admin
-    // ditolak              -> bukti ditolak admin, customer perlu upload ulang
+    // Status Pembayaran (Alur Pembayaran QRIS/Transfer):
+    // - pending: Belum mengunggah bukti pembayaran
+    // - menunggu_verifikasi: Bukti diunggah, menunggu persetujuan admin
+    // - paid: Pembayaran terverifikasi (ACC)
+    // - ditolak: Bukti pembayaran ditolak, minta unggah ulang
     public const PAYMENT_PENDING = "pending";
     public const PAYMENT_WAITING_VERIFICATION = "menunggu_verifikasi";
     public const PAYMENT_PAID = "paid";
     public const PAYMENT_REJECTED = "ditolak";
 
+    /**
+     * Memeriksa apakah pesanan membutuhkan pengunggahan bukti pembayaran.
+     */
     public function isAwaitingProof(): bool
     {
         return in_array($this->payment_status, [self::PAYMENT_PENDING, self::PAYMENT_REJECTED]);
     }
 
+    /**
+     * Memeriksa apakah pesanan sedang dalam antrean verifikasi admin.
+     */
     public function isAwaitingVerification(): bool
     {
         return $this->payment_status === self::PAYMENT_WAITING_VERIFICATION;
     }
 
+    /**
+     * Memeriksa apakah pembayaran pesanan sudah lunas (terverifikasi).
+     */
     public function isPaid(): bool
     {
         return $this->payment_status === self::PAYMENT_PAID;

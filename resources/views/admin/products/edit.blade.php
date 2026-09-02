@@ -77,10 +77,25 @@
                 </div>
             @endif
 
-            <label class="flex items-center gap-2 text-xs font-semibold text-[#E8D5B7] cursor-pointer select-none">
-                <input type="checkbox" name="is_active" value="1" @checked(old('is_active', $product->is_active)) class="w-4 h-4 rounded border-[#4E4640] bg-[#24201D] text-[#72383D] focus:ring-[#72383D]/30">
-                Aktifkan produk (tampil di halaman depan toko)
-            </label>
+            <div>
+                <label class="block text-xs font-bold text-[#E8D5B7] mb-2 uppercase tracking-wider">Status Tampilan Produk <span class="text-rose-400">*</span></label>
+                <div class="grid grid-cols-2 gap-3 max-w-md">
+                    <label class="relative flex items-center justify-center p-3 rounded-xl border cursor-pointer transition-all select-none has-[:checked]:bg-emerald-950/80 has-[:checked]:border-emerald-500 has-[:checked]:text-emerald-300 bg-[#24201D] border-[#4E4640] text-[#BBAE9F] hover:border-[#72383D]">
+                        <input type="radio" name="is_active" value="1" @checked(old('_token') ? old('is_active') == '1' : $product->is_active) class="sr-only">
+                        <div class="flex items-center gap-2 text-xs font-bold">
+                            <span class="w-2.5 h-2.5 rounded-full bg-emerald-400"></span>
+                            <span>Aktif</span>
+                        </div>
+                    </label>
+                    <label class="relative flex items-center justify-center p-3 rounded-xl border cursor-pointer transition-all select-none has-[:checked]:bg-rose-950/80 has-[:checked]:border-rose-500 has-[:checked]:text-rose-300 bg-[#24201D] border-[#4E4640] text-[#BBAE9F] hover:border-[#72383D]">
+                        <input type="radio" name="is_active" value="0" @checked(old('_token') ? old('is_active') == '0' : !$product->is_active) class="sr-only">
+                        <div class="flex items-center gap-2 text-xs font-bold">
+                            <span class="w-2.5 h-2.5 rounded-full bg-rose-400"></span>
+                            <span>Nonaktif</span>
+                        </div>
+                    </label>
+                </div>
+            </div>
         </div>
 
         <div class="pt-4 border-t border-[#4E4640] space-y-4">

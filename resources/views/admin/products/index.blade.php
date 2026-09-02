@@ -86,9 +86,20 @@
                                 <td class="py-4 px-6 font-extrabold text-[#E2C599]">{{ $product->variants_count }} Varian</td>
                                 <td class="py-4 px-6 font-bold text-white">Rp {{ number_format($product->base_price, 0, ',', '.') }}</td>
                                 <td class="py-4 px-6">
-                                    <span class="px-3 py-1 rounded-full text-xs font-bold border {{ $product->is_active ? 'bg-emerald-950/60 text-emerald-300 border-emerald-800/60' : 'bg-rose-950/60 text-rose-300 border-rose-800/60' }}">
-                                        {{ $product->is_active ? 'Aktif' : 'Nonaktif' }}
-                                    </span>
+                                    <form method="POST" action="{{ route('admin.products.toggleStatus', $product) }}" class="inline">
+                                        @csrf @method('PATCH')
+                                        @if($product->is_active)
+                                            <button type="submit" title="Klik untuk menonaktifkan produk" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-bold bg-emerald-950/80 text-emerald-300 border border-emerald-700/70 hover:bg-rose-950 hover:text-rose-300 hover:border-rose-700 transition group cursor-pointer">
+                                                <span class="w-2 h-2 rounded-full bg-emerald-400 group-hover:bg-rose-400"></span>
+                                                <span>Aktif</span>
+                                            </button>
+                                        @else
+                                            <button type="submit" title="Klik untuk mengaktifkan produk" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-bold bg-rose-950/80 text-rose-300 border border-rose-700/70 hover:bg-emerald-950 hover:text-emerald-300 hover:border-emerald-700 transition group cursor-pointer">
+                                                <span class="w-2 h-2 rounded-full bg-rose-400 group-hover:bg-emerald-400"></span>
+                                                <span>Nonaktif</span>
+                                            </button>
+                                        @endif
+                                    </form>
                                 </td>
                                 <td class="py-4 px-6 text-right">
                                     <div class="flex items-center justify-end gap-2">

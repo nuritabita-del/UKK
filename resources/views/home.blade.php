@@ -5,7 +5,7 @@
 @section("content")
 <div class="space-y-12">
 
-    <!-- Hero Banner Section with Interactive Cursor Trace -->
+    <!-- Hero Banner Section dengan Interactive Cursor Trace -->
     <section id="hero-banner" 
              onmousemove="handleHeroMouseMove(event)" 
              onmouseleave="handleHeroMouseLeave()"
@@ -54,6 +54,7 @@
             </a>
         </div>
 
+        <!-- RESPONSIVE GRID: grid-cols-2 (2 kolom di HP), md:grid-cols-4 (berubah jadi 4 kolom saat dibuka di tablet/laptop ≥768px) -->
         <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
             @foreach($categories as $category)
                 <a href="{{ route('products.index', ['category' => $category->slug]) }}"

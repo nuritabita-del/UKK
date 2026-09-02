@@ -10,11 +10,14 @@ use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
+/**
+ * Seeder data awal untuk mengisi database pengujian (User, Kategori, Produk, dan Varian).
+ */
 class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
-        // Admin
+        // 1. Akun Administrator
         $admin = User::create([
             "name" => "Admin Cookie Shop",
             "email" => "admin@cookieshop.test",
@@ -23,7 +26,7 @@ class DatabaseSeeder extends Seeder
             "phone" => "081234567890",
         ]);
 
-        // Customer contoh
+        // 2. Akun Pelanggan (Customer) & Keranjang
         $customer = User::create([
             "name" => "Budi Santoso",
             "email" => "customer@cookieshop.test",
@@ -32,7 +35,7 @@ class DatabaseSeeder extends Seeder
         ]);
         Cart::create(["user_id" => $customer->id]);
 
-        // Kategori
+        // 3. Kategori Produk
         $categories = [
             "Cookies Klasik" => "Kue kering renyah dengan rasa original yang tak lekang waktu.",
             "Cookies Premium" => "Varian kue kering dengan bahan pilihan dan topping istimewa.",
@@ -49,7 +52,7 @@ class DatabaseSeeder extends Seeder
             ]);
         }
 
-        // Produk + varian (rasa & ukuran)
+        // 4. Data Produk beserta Varian Rasa & Ukuran
         $products = [
             [
                 "category" => "Cookies Klasik",
@@ -121,6 +124,7 @@ class DatabaseSeeder extends Seeder
             ],
         ];
 
+        // Buat record produk dan varian ke database
         foreach ($products as $p) {
             $product = Product::create([
                 "category_id" => $categoryModels[$p["category"]]->id,

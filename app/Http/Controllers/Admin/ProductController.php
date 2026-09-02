@@ -9,8 +9,14 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
+/**
+ * Mengelola kelola produk dan variannya (CRUD) untuk panel admin.
+ */
 class ProductController extends Controller
 {
+    /**
+     * Menampilkan daftar seluruh produk beserta jumlah varian dan pencarian.
+     */
     public function index(Request $request)
     {
         $query = Product::with("category")->withCount("variants");
@@ -24,6 +30,9 @@ class ProductController extends Controller
         return view("admin.products.index", compact("products"));
     }
 
+    /**
+     * Menampilkan formulir penambahan produk baru.
+     */
     public function create()
     {
         $categories = Category::all();
@@ -31,22 +40,28 @@ class ProductController extends Controller
         return view("admin.products.create", compact("categories"));
     }
 
+    /**
+     * Menyimpan data produk baru beserta gambar dan variannya ke database.
+     */
     public function store(Request $request)
     {
         $data = $this->validateProduct($request);
 
+        // Unggah gambar produk jika tersedia
         if ($request->hasFile("image")) {
             $data["image"] = $request->file("image")->store("products", "public");
         }
 
         $data["slug"] = Str::slug($data["name"]) . "-" . Str::random(4);
-        $data["is_active"] = $request->boolean("is_active", true);
+        $data["is_active"] = $request->boolean("is_active");
 
         $variants = $data["variants"] ?? [];
         unset($data["variants"]);
 
+        // Simpan data produk utama
         $product = Product::create($data);
 
+        // Simpan setiap varian produk
         foreach ($variants as $variant) {
             $product->variants()->create($variant);
         }
@@ -54,6 +69,9 @@ class ProductController extends Controller
         return redirect()->route("admin.products.index")->with("success", "Produk berhasil ditambahkan.");
     }
 
+    /**
+     * Menampilkan formulir penyuntingan produk dan variannya.
+     */
     public function edit(Product $product)
     {
         $categories = Category::all();
@@ -62,10 +80,14 @@ class ProductController extends Controller
         return view("admin.products.edit", compact("product", "categories"));
     }
 
+    /**
+     * Memperbarui data produk, mengganti gambar, dan mengoperasikan sinkronisasi varian.
+     */
     public function update(Request $request, Product $product)
     {
         $data = $this->validateProduct($request);
 
+        // Ganti gambar jika diunggah file baru
         if ($request->hasFile("image")) {
             if ($product->image) {
                 Storage::disk("public")->delete($product->image);
@@ -73,14 +95,14 @@ class ProductController extends Controller
             $data["image"] = $request->file("image")->store("products", "public");
         }
 
-        $data["is_active"] = $request->boolean("is_active", true);
+        $data["is_active"] = $request->boolean("is_active");
 
         $variants = $data["variants"] ?? [];
         unset($data["variants"]);
 
         $product->update($data);
 
-        // Sinkronisasi varian: hapus yang tidak ada di form, update yang ada, buat yang baru.
+        // Sinkronisasi varian: hapus varian yang dihilangkan dari form, perbarui yang ada, buat varian baru
         $existingIds = collect($variants)->pluck("id")->filter()->toArray();
         $product->variants()->whereNotIn("id", $existingIds)->delete();
 
@@ -95,8 +117,12 @@ class ProductController extends Controller
         return redirect()->route("admin.products.index")->with("success", "Produk berhasil diperbarui.");
     }
 
+    /**
+     * Menghapus produk beserta gambar terkait dari sistem.
+     */
     public function destroy(Product $product)
     {
+        // Hapus file gambar dari penyimpanan jika ada
         if ($product->image) {
             Storage::disk("public")->delete($product->image);
         }
@@ -106,6 +132,23 @@ class ProductController extends Controller
         return back()->with("success", "Produk berhasil dihapus.");
     }
 
+    /**
+     * Mengubah status aktif/nonaktif produk secara instan.
+     */
+    public function toggleStatus(Product $product)
+    {
+        $product->update([
+            "is_active" => ! $product->is_active,
+        ]);
+
+        $statusLabel = $product->is_active ? "diaktifkan (tampil di toko)" : "dinonaktifkan (disembunyikan dari toko)";
+
+        return back()->with("success", "Status produk \"{$product->name}\" berhasil {$statusLabel}.");
+    }
+
+    /**
+     * Validasi aturan form untuk data produk dan variannya.
+     */
     private function validateProduct(Request $request): array
     {
         return $request->validate([
